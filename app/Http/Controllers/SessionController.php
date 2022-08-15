@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Session;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class SessionController extends Controller
 {
@@ -14,7 +17,8 @@ class SessionController extends Controller
      */
     public function index()
     {
-        //
+        $sessions = Session::all();
+        return view("session.index", compact('sessions'));
     }
 
     /**
@@ -82,4 +86,49 @@ class SessionController extends Controller
     {
         //
     }
+
+    public function import(Request $request) {
+        ini_set('max_execution_time', 3600);
+        $this->validate($request, [
+            'file'  => 'required|mimes:xls,xlsx,csv'
+        ]);
+
+
+        $path = $request->file('file')->getRealPath();
+
+        $data = Excel::toArray([], $path);
+
+        DB::beginTransaction();
+        $message = "Error";
+        $saved = true;
+        if (count($data) > 0) {
+            foreach ($data as $key => $value) {
+                foreach ($value as $row) {
+                    $session = new Session();
+
+                    $date = intval($row[0]);
+                    $start = $row[1];
+                    $end = $row[2];
+
+
+                    $session_date = Date::excelToDateTimeObject($date)->format('Y-m-d');
+                    $session_start = Date::excelToDateTimeObject($start);
+                    $session_end = Date::excelToDateTimeObject($end);
+
+                    $session->date = $session_date;
+                    $session->start = $session_start;
+                    $session->end = $session_end;
+                    $session = $saved && $session->save();
+                }
+            }
+        }
+        if ($saved) {
+            DB::commit();
+            return redirect()->route('session.index');
+        } else {
+            DB::rollBack();
+            return back()->with('error', $message);
+        }
+    }
+
 }

@@ -33,7 +33,15 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-
+                        <li class="nav-item">
+                            <a href="{{ route('lecturer.index') }}" class="nav-link">Dosen</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('session.index') }}" class="nav-link">Sesi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('readiness.index') }}" class="nav-link">Kesediaan</a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Readiness;
+use App\Session;
 use Illuminate\Http\Request;
 
 class ReadinessController extends Controller
@@ -81,5 +82,10 @@ class ReadinessController extends Controller
     public function destroy(Readiness $readiness)
     {
         //
+    }
+
+    public function add($lecturer_id) {
+        $sessions = Session::all();
+        return view('readiness.add', compact('lecturer_id', 'sessions'));
     }
 }

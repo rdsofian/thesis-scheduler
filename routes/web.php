@@ -20,3 +20,13 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::post('/lecturer/import', 'LecturerController@import')->name('lecturer.import');
+Route::resource('lecturer', 'LecturerController');
+
+
+Route::post('/session/import', 'SessionController@import')->name('session.import');
+Route::resource('session', 'SessionController');
+
+Route::post('/readiness/add/{lecturer_id}', 'ReadinessController@add')->name('readiness.add');
+Route::resource('readiness', 'ReadinessController');

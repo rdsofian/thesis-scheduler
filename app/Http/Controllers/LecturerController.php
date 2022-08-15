@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Lecturer;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 
 class LecturerController extends Controller
 {
@@ -14,7 +17,8 @@ class LecturerController extends Controller
      */
     public function index()
     {
-        //
+        $lecturers = Lecturer::all();
+        return view("lecturer.index", compact('lecturers'));
     }
 
     /**
@@ -81,5 +85,39 @@ class LecturerController extends Controller
     public function destroy(Lecturer $lecturer)
     {
         //
+    }
+
+    public function import(Request $request) {
+        ini_set('max_execution_time', 3600);
+        $this->validate($request, [
+            'file'  => 'required|mimes:xls,xlsx,csv'
+        ]);
+
+
+        $path = $request->file('file')->getRealPath();
+
+        $data = Excel::toArray([], $path);
+
+        DB::beginTransaction();
+        $message = "Error";
+        $saved = true;
+        if (count($data) > 0) {
+            foreach ($data as $key => $value) {
+                foreach ($value as $row) {
+                    $lecturer = new Lecturer();
+
+                    $lecturer->code = $row[0];
+                    $lecturer->name = $row[1];
+                    $lecturer = $saved && $lecturer->save();
+                }
+            }
+        }
+        if ($saved) {
+            DB::commit();
+            return redirect()->route('lecturer.index');
+        } else {
+            DB::rollBack();
+            return back()->with('error', $message);
+        }
     }
 }

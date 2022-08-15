@@ -17,6 +17,7 @@ class CreateReadinessesTable extends Migration
             $table->id();
             $table->unsignedBigInteger("lecturer_id");
             $table->unsignedBigInteger("session_id");
+            $table->string("status")->nullable();
             $table->timestamps();
 
             $table->foreign('lecturer_id')->references('id')->on('lecturers')->onDelete("cascade");
