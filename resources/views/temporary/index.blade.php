@@ -41,7 +41,7 @@
                             @foreach ($temporaries as $temporary)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $temporary->day_name . ", " . $temporary->date }}</td>
+                                    <td>{{ $temporary->day_name . ", " . date("d M Y", strtotime($temporary->date)) }}</td>
                                     <td>{{ $temporary->time }}</td>
                                     <td>{{ $temporary->room }}</td>
                                     <td>{{ $temporary->code }}</td>
