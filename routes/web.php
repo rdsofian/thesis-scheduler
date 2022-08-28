@@ -30,3 +30,6 @@ Route::resource('session', 'SessionController');
 
 Route::post('/readiness/add/{lecturer_id}', 'ReadinessController@add')->name('readiness.add');
 Route::resource('readiness', 'ReadinessController');
+
+Route::post('/temporary/import', 'ReportTemporaryController@import')->name('temporary.import');
+Route::resource('temporary', 'ReportTemporaryController');
